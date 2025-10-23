@@ -1,0 +1,132 @@
+## FULL PROMPT FOR REPLIT:
+
+```
+Create a complete, production-ready React + TypeScript + Vite frontend application for a Video Highlight Generator. The app should have the following EXACT file structure and functionality:
+
+### FILE STRUCTURE:
+```
+video-highlight-frontend/
+├── index.html
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── components/
+│   │   ├── FileUpload.tsx
+│   │   ├── VideoProcessor.tsx
+│   │   └── SpreadsheetEditor.tsx
+│   └── types/
+│       └── index.ts
+├── package.json
+└── vite.config.ts
+```
+
+### EXACT CONTENT FOR EACH FILE:
+
+1. **package.json**:
+```json
+{
+  "name": "video-highlight-generator",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.463.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0",
+    "tailwindcss": "^3.3.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  }
+}
+```
+
+2. **vite.config.ts**:
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  base: '/',
+})
+```
+
+3. **tailwind.config.js** (create this too):
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+4. **src/types/index.ts**:
+```typescript
+export interface ApiResponse {
+  message: string;
+  spreadsheetId: string;
+  spreadsheetUrl: string;
+}
+
+export interface UploadState {
+  stage: 'upload' | 'processing' | 'editing' | 'generating' | 'complete';
+  selectedFile: File | null;
+  isProcessing: boolean;
+  isGenerating: boolean;
+  error: string | null;
+  apiResponse: ApiResponse | null;
+  downloadUrl: string | null;
+}
+```
+
+### APPLICATION FUNCTIONALITY:
+
+The app should be a video highlight generator with this workflow:
+
+1. **UPLOAD STAGE**: Drag & drop file upload for videos
+2. **PROCESSING STAGE**: Call API endpoint to process video
+3. **EDITING STAGE**: Show embedded Google Sheets for editing
+4. **GENERATING STAGE**: Call API to generate final video
+5. **COMPLETE STAGE**: Download final video
+
+### API ENDPOINTS:
+- First API: POST to `http://localhost:5678/webhook-test/bdef75c6-0881-4a7b-b3e8-1ed19306512c` (video processing)
+- Second API: POST to `http://localhost:5678/webhook-test/c00db252-0e0e-484c-94dd-c3f405825c10` (video generation)
+
+### CRITICAL REQUIREMENTS:
+- ✅ Use ONLY relative imports (./components/ not @/components/)
+- ✅ NO backend dependencies or server code
+- ✅ Simple Tailwind CSS (no complex CSS variables)
+- ✅ Must build successfully with `vite build`
+- ✅ All TypeScript types defined
+- ✅ Proper error handling
+- ✅ Responsive design
+
+### STYLING:
+- Use Tailwind CSS with dark theme
+- Professional, modern UI
+- Loading states for all async operations
+- Error messages with retry functionality
+
+Provide the complete, working code for ALL files. The application must build and run without errors.
+```
+
+This prompt gives Replit **everything it needs** to create a clean, working frontend without any of the configuration hell we've been dealing with! 🚀
