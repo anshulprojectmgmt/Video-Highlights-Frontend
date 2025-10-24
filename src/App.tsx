@@ -300,8 +300,9 @@ import { SpreadsheetEditor } from './components/SpreadsheetEditor';
 import { Download, ArrowLeft } from 'lucide-react';
 import { UploadState } from './types';
 
-const API_PROCESS_URL = 'http://localhost:5678/webhook-test/bdef75c6-0881-4a7b-b3e8-1ed19306512c';
-const API_GENERATE_URL = 'http://localhost:5678/webhook-test/c00db252-0e0e-484c-94dd-c3f405825c10';
+// Replace these hardcoded URLs:
+const API_PROCESS_URL = import.meta.env.VITE_API_PROCESS_URL 
+const API_GENERATE_URL = import.meta.env.VITE_API_GENERATE_URL 
 
 function App() {
   const [state, setState] = useState<UploadState>({
