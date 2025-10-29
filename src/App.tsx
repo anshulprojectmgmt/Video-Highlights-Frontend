@@ -301,8 +301,16 @@ import { Download, ArrowLeft } from 'lucide-react';
 import { UploadState } from './types';
 
 // Replace these hardcoded URLs:
-const API_PROCESS_URL = import.meta.env.VITE_API_PROCESS_URL 
-const API_GENERATE_URL = import.meta.env.VITE_API_GENERATE_URL 
+const API_PROCESS_URL = 'http://43.205.125.175:5678/webhook/bdef75c6-0881-4a7b-b3e8-1ed19306512c';
+const API_GENERATE_URL = 'http://43.205.125.175:5678/webhook/c00db252-0e0e-484c-94dd-c3f405825c10';
+
+// Add this right after the URL declarations:
+console.log('🔧 Environment URLs:', {
+  processUrl: import.meta.env.VITE_API_PROCESS_URL,
+  generateUrl: import.meta.env.VITE_API_GENERATE_URL,
+  usingProcessUrl: API_PROCESS_URL,
+  usingGenerateUrl: API_GENERATE_URL
+});
 
 function App() {
   const [state, setState] = useState<UploadState>({
