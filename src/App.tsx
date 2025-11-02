@@ -302,8 +302,8 @@ import { SpreadsheetEditor } from './components/SpreadsheetEditor';
 import { Download, ArrowLeft } from 'lucide-react';
 import { UploadState } from './types';
 
-const API_PROCESS_URL = 'https://n8n.realtyai.in/webhook-test/bdef75c6-0881-4a7b-b3e8-1ed19306512c';
-const API_GENERATE_URL = 'https://n8n.realtyai.in/webhook-test/c00db252-0e0e-484c-94dd-c3f405825c10';
+const API_PROCESS_URL = import.meta.env.VITE_API_PROCESS_URL ;
+const API_GENERATE_URL = import.meta.env.VITE_API_GENERATE_URL;
 
 // Default avatar ID - change this to your actual default avatar ID
 const DEFAULT_AVATAR_ID = 'Georgia_sitting_office_front';
