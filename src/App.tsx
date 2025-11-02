@@ -293,6 +293,8 @@
 // export default App;
 
 
+
+// WITH HEYGEN API FIELDS
 import React, { useState, useCallback } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { VideoProcessor } from './components/VideoProcessor';
@@ -300,17 +302,11 @@ import { SpreadsheetEditor } from './components/SpreadsheetEditor';
 import { Download, ArrowLeft } from 'lucide-react';
 import { UploadState } from './types';
 
-// Replace these hardcoded URLs:
-const API_PROCESS_URL = 'https://n8n.realtyai.in/webhook/bdef75c6-0881-4a7b-b3e8-1ed19306512c';
-const API_GENERATE_URL = 'https://n8n.realtyai.in/webhook/c00db252-0e0e-484c-94dd-c3f405825c10';
+const API_PROCESS_URL = 'https://n8n.realtyai.in/webhook-test/bdef75c6-0881-4a7b-b3e8-1ed19306512c';
+const API_GENERATE_URL = 'https://n8n.realtyai.in/webhook-test/c00db252-0e0e-484c-94dd-c3f405825c10';
 
-// Add this right after the URL declarations:
-console.log('🔧 Environment URLs:', {
-  processUrl: import.meta.env.VITE_API_PROCESS_URL,
-  generateUrl: import.meta.env.VITE_API_GENERATE_URL,
-  usingProcessUrl: API_PROCESS_URL,
-  usingGenerateUrl: API_GENERATE_URL
-});
+// Default avatar ID - change this to your actual default avatar ID
+const DEFAULT_AVATAR_ID = 'Georgia_sitting_office_front';
 
 function App() {
   const [state, setState] = useState<UploadState>({
@@ -321,9 +317,20 @@ function App() {
     error: null,
     apiResponse: null,
     downloadUrl: null,
+    heygenApiKey: '',
+    avatarId: '',
   });
 
   const processVideo = useCallback(async (file: File) => {
+    // Validate Heygen API Key
+    if (!state.heygenApiKey) {
+      setState(prev => ({
+        ...prev,
+        error: "Heygen API Key is required to process videos"
+      }));
+      return;
+    }
+
     setState(prev => ({
       ...prev,
       isProcessing: true,
@@ -336,6 +343,7 @@ function App() {
       formData.append('video', file);
 
       console.log('🔄 PROCESSING: Sending video to:', API_PROCESS_URL);
+      console.log('🔑 PROCESSING: Heygen API Key provided:', !!state.heygenApiKey);
 
       const response = await fetch(API_PROCESS_URL, {
         method: 'POST',
@@ -368,7 +376,7 @@ function App() {
         error: error instanceof Error ? error.message : 'Failed to process video',
       }));
     }
-  }, []);
+  }, [state.heygenApiKey]);
 
   const generateVideo = useCallback(async () => {
     if (!state.apiResponse) return;
@@ -379,6 +387,8 @@ function App() {
       console.log('🔄 GENERATING: Sending request to:', API_GENERATE_URL);
       console.log('🔄 GENERATING: Spreadsheet ID:', state.apiResponse.spreadsheetId);
       console.log('🔄 GENERATING: Spreadsheet URL:', state.apiResponse.spreadsheetUrl);
+      console.log('🔑 GENERATING: Heygen API Key:', !!state.heygenApiKey);
+      console.log('👤 GENERATING: Avatar ID:', state.avatarId || DEFAULT_AVATAR_ID);
   
       const response = await fetch(API_GENERATE_URL, {
         method: 'POST',
@@ -388,13 +398,13 @@ function App() {
         body: JSON.stringify({
           spreadsheetId: state.apiResponse.spreadsheetId,
           spreadsheetUrl: state.apiResponse.spreadsheetUrl,
+          heygenApiKey: state.heygenApiKey,
+          avatarId: state.avatarId || DEFAULT_AVATAR_ID, // Use default if empty
         }),
       });
   
       console.log('📨 GENERATING: Response status:', response.status);
       console.log('📨 GENERATING: Response ok:', response.ok);
-      console.log('📨 GENERATING: Response headers:', Object.fromEntries(response.headers.entries()));
-      console.log('📨 GENERATING: Response type:', response.type);
   
       if (!response.ok) {
         const errorText = await response.text().catch(() => response.statusText);
@@ -498,16 +508,19 @@ function App() {
         error: error instanceof Error ? error.message : 'Failed to generate video',
       }));
     }
-  }, [state.apiResponse]);
+  }, [state.apiResponse, state.heygenApiKey, state.avatarId]);
 
   const handleFileSelect = useCallback((file: File) => {
     console.log('📁 FILE SELECTED:', file.name, file.size, file.type);
+    console.log('🔑 Heygen API Key provided:', !!state.heygenApiKey);
+    console.log('👤 Avatar ID provided:', state.avatarId || 'Using default');
+    
     setState(prev => ({
       ...prev,
       selectedFile: file,
     }));
     processVideo(file);
-  }, [processVideo]);
+  }, [processVideo, state.heygenApiKey, state.avatarId]);
 
   const handleRetry = useCallback(() => {
     console.log('🔄 RETRYING current stage:', state.stage);
@@ -528,6 +541,8 @@ function App() {
       error: null,
       apiResponse: null,
       downloadUrl: null,
+      heygenApiKey: '',
+      avatarId: '',
     });
   }, []);
 
@@ -538,6 +553,8 @@ function App() {
     error: state.error,
     hasApiResponse: !!state.apiResponse,
     hasDownloadUrl: !!state.downloadUrl,
+    hasHeygenApiKey: !!state.heygenApiKey,
+    hasAvatarId: !!state.avatarId,
   });
 
   return (
@@ -595,7 +612,14 @@ function App() {
 
         <main className="min-h-[500px] flex items-center justify-center">
           {state.stage === 'upload' && (
-            <FileUpload onFileSelect={handleFileSelect} />
+            <FileUpload 
+            onFileSelect={handleFileSelect}
+            heygenApiKey={state.heygenApiKey}
+            avatarId={state.avatarId}
+            onHeygenApiKeyChange={(key) => setState(prev => ({ ...prev, heygenApiKey: key }))}
+            onAvatarIdChange={(id) => setState(prev => ({ ...prev, avatarId: id }))}
+            isProcessing={state.isProcessing}  // Add this
+          />
           )}
 
           {state.stage === 'processing' && (
