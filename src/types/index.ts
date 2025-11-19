@@ -10,6 +10,9 @@ export interface UploadState {
   isProcessing: boolean;
   isGenerating: boolean;
   error: string | null;
-  apiResponse: ApiResponse | null;
+  apiResponse: any | null;
   downloadUrl: string | null;
+  heygenApiKey: string;
+  avatarId: string;
+  voiceId: string; // Add this
 }
