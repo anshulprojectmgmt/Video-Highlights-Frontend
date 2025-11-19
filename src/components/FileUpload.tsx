@@ -1,4 +1,3 @@
-
 import React, { useCallback, useState } from 'react';
 import { Upload, FileVideo, Play } from 'lucide-react';
 
@@ -6,8 +5,10 @@ interface FileUploadProps {
   onFileSelect: (file: File) => void;
   heygenApiKey: string;
   avatarId: string;
+  voiceId: string;
   onHeygenApiKeyChange: (key: string) => void;
   onAvatarIdChange: (id: string) => void;
+  onVoiceIdChange: (id: string) => void;
   isProcessing?: boolean;
 }
 
@@ -15,8 +16,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   onFileSelect, 
   heygenApiKey, 
   avatarId, 
+  voiceId,
   onHeygenApiKeyChange, 
   onAvatarIdChange,
+  onVoiceIdChange,
   isProcessing = false
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -67,7 +70,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     }
   }, [selectedFile, heygenApiKey, onFileSelect]);
 
-  const isFormValid = selectedFile && heygenApiKey;
+  // Voice ID becomes required if Avatar ID is provided
+  const isVoiceIdRequired = avatarId && !voiceId;
+  const isFormValid = selectedFile && heygenApiKey && !isVoiceIdRequired;
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
@@ -146,6 +151,28 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         </p>
       </div>
 
+      {/* Voice ID Input */}
+      <div className="bg-gray-800 rounded-lg p-6">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
+          Voice ID {avatarId && '*'}
+        </label>
+        <input
+          type="text"
+          value={voiceId}
+          onChange={(e) => onVoiceIdChange(e.target.value)}
+          className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            isVoiceIdRequired ? 'border-red-500' : 'border-gray-600'
+          }`}
+          placeholder={avatarId ? "Voice ID is required with Avatar ID" : "Enter your Voice ID (optional)"}
+        />
+        <p className="text-xs text-gray-400 mt-2">
+          {avatarId 
+            ? "Required when using a custom Avatar ID" 
+            : "Optional. If not provided, default voice will be used."
+          }
+        </p>
+      </div>
+
       {/* Process Video Button */}
       <div className="flex justify-center">
         <button
@@ -167,6 +194,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <div className="text-center text-yellow-400 text-sm">
           {!selectedFile && "Please select a video file"}
           {selectedFile && !heygenApiKey && "Please enter your Heygen API key"}
+          {selectedFile && heygenApiKey && isVoiceIdRequired && "Voice ID is required when using Avatar ID"}
         </div>
       )}
     </div>
